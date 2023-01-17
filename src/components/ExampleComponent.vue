@@ -12,18 +12,59 @@
   </q-card>
 </template>
 
-<script setup lang="ts">
-import { ref } from 'vue';
+<script setup>
+import { onMounted, ref } from 'vue';
 
-const counter = ref<number>(Number(localStorage.getItem('counter')));
+const counter = ref(0);
 
-const increase = (): number => counter.value++;
-const descrease = (): number | void =>
-  counter.value > 0 ? counter.value-- : undefined;
+const increase = () => counter.value++;
+const descrease = () => (counter.value > 0 ? counter.value-- : undefined);
 
-const updateStorage = () => {
-  localStorage.setItem('counter', counter.value.toString());
+//indexDB
+
+function indexedDBSupport() {
+  return 'indexedDB' in window;
+}
+
+let request;
+
+const createDatabase = () => {
+  if (!indexedDBSupport())
+    throw new Error("Your browser doesn't support IndexedBD");
+
+  request = window.indexedDB.open('MyDatabase', 1);
+  request.onsuccess = () => {
+    console.log('success');
+    getData(1);
+  };
+  request.onupgradeneeded = (e) => {
+    const objectStore = request.result.createObjectStore('counter', {
+      autoIncrement: true,
+    });
+    // objectStore.transaction.oncomplete = (event) => {
+    //   const customerObjectStore = request.result
+    //     .transaction('counter', 'readwrite')
+    //     .objectStore('counter');
+    //   customerObjectStore.add(12);
+    // };
+  };
 };
 
-window.addEventListener('beforeunload', updateStorage);
+// const addData = (data) => {
+//   db.transaction('counter', 'readwrite').objectStore('counter').add(data);
+// };
+
+const getData = (key) => {
+  console.log('data');
+  const data = request.result
+    .transaction('counter')
+    .objectStore('counter')
+    .get(key);
+  data.onsuccess = (e) => (counter.value = e.target.result);
+};
+
+onMounted(() => {
+  createDatabase();
+  console.log('mounted');
+});
 </script>
