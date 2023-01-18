@@ -41,7 +41,6 @@ const createDatabase = () => {
 
   request = window.indexedDB.open('MyDatabase', 1);
   request.onsuccess = () => {
-    console.log('success');
     getData(1);
   };
   request.onupgradeneeded = () => {
@@ -55,13 +54,6 @@ const createDatabase = () => {
       customerObjectStore.add(0);
     };
   };
-};
-
-const addData = (data) => {
-  request.result
-    .transaction('counter', 'readwrite')
-    .objectStore('counter')
-    .add(data);
 };
 
 const updateData = (data) => {
@@ -82,6 +74,5 @@ const getData = (key) => {
 
 onMounted(() => {
   createDatabase();
-  console.log('mounted');
 });
 </script>
