@@ -14,7 +14,10 @@
     "build:pwa": "quasar build -m pwa",
     "build:ssg": "quasar ssg generate",
     "dev:ssg": "quasar ssg dev",
-    "serve:ssg": "quasar ssg serve dist/ssg"
+    "serve:ssg": "quasar ssg serve dist/ssg",
+    "capacitor:dev": "quasar dev -m capacitor -T android",
+    "capacitor:build": "quasar build -m capacitor -T android",
+    "capacitor:build-ide": "quasar build -m capacitor -T android --ide"
   },
   "dependencies": {
     "@quasar/extras": "^1.0.0",
