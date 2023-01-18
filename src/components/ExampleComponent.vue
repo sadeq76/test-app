@@ -17,8 +17,15 @@ import { onMounted, ref } from 'vue';
 
 const counter = ref(0);
 
-const increase = () => counter.value++;
-const descrease = () => (counter.value > 0 ? counter.value-- : undefined);
+const increase = () => {
+  counter.value++;
+  updateData(counter.value);
+};
+const descrease = () => {
+  if (counter.value <= 0) return;
+  counter.value--;
+  updateData(counter.value);
+};
 
 //indexDB
 
@@ -37,22 +44,32 @@ const createDatabase = () => {
     console.log('success');
     getData(1);
   };
-  request.onupgradeneeded = (e) => {
+  request.onupgradeneeded = () => {
     const objectStore = request.result.createObjectStore('counter', {
       autoIncrement: true,
     });
-    // objectStore.transaction.oncomplete = (event) => {
-    //   const customerObjectStore = request.result
-    //     .transaction('counter', 'readwrite')
-    //     .objectStore('counter');
-    //   customerObjectStore.add(12);
-    // };
+    objectStore.transaction.oncomplete = () => {
+      const customerObjectStore = request.result
+        .transaction('counter', 'readwrite')
+        .objectStore('counter');
+      customerObjectStore.add(0);
+    };
   };
 };
 
-// const addData = (data) => {
-//   db.transaction('counter', 'readwrite').objectStore('counter').add(data);
-// };
+const addData = (data) => {
+  request.result
+    .transaction('counter', 'readwrite')
+    .objectStore('counter')
+    .add(data);
+};
+
+const updateData = (data) => {
+  request.result
+    .transaction('counter', 'readwrite')
+    .objectStore('counter')
+    .put(data, 1);
+};
 
 const getData = (key) => {
   console.log('data');
