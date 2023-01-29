@@ -64,7 +64,6 @@ const updateData = (data) => {
 };
 
 const getData = (key) => {
-  console.log('data');
   const data = request.result
     .transaction('counter')
     .objectStore('counter')
